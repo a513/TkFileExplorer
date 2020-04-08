@@ -437,7 +437,7 @@ namespace eval FE {
 	set rg1 [string range $rgeom $rg+1 end]
 	if {$rw <= $tw} {
 #Окно fe уже главного окна
-    	    append geometr $rg1
+    	    append geometr +$rg1
         } else {
 	    set off [expr ($rw - $tw) / 2]
 	    set rg2 [string first "+" $rg1]
