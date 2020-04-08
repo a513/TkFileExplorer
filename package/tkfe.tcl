@@ -929,9 +929,23 @@ puts "\n$newdir\n$oldname\n$newd\n$oldn"
     initfe $typew $w $tekdir dir $rr ""
     return "FE::$rr"
   }
+  proc all_disable {parent} {
+    set widgets [info commands $parent*]
+    foreach w $widgets {
+	catch {$w configure -state disabled}
+    }
+  }
+  proc all_enable {parent} {
+    set widgets [info commands $parent*]
+    foreach w $widgets {
+	catch {$w configure -state normal}
+    }
+  }
 
   namespace export fe_getsavefile
   namespace export fe_getopenfile
   namespace export fe_choosedir
+  namespace export all_enable
+  namespace export all_disable
 }
 

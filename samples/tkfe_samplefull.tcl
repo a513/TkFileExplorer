@@ -21,6 +21,10 @@ proc selectpath {w wplace} {
     variable typew
 #Каталог пользователя
     set tekdir $env(HOME)
+    if {$typew == "frame"} {
+#Блокируем все кнопки
+	FE::all_disable "."
+    }
     if {[tk windowingsystem] == "win32"} {
 #Перекодируем путь из кодировки ОС
 #Для MS Win это скорей всего cp1251
@@ -54,6 +58,10 @@ proc selectpath {w wplace} {
     }
 #Ждем результата
     vwait $vrr
+    if {$typew == "frame"} {
+#Разблокируем кнопки
+	FE::all_enable "."
+    }
 #    set r ""
 #Записываем результат в переменную r
     set r [subst $$vrr]
