@@ -23,7 +23,8 @@ proc selectpath {w wplace} {
     set tekdir $env(HOME)
     if {$typew == "frame"} {
 #Блокируем все кнопки
-	FE::all_disable "."
+#	FE::all_disable "."
+	tk busy hold "."
     }
     if {[tk windowingsystem] == "win32"} {
 #Перекодируем путь из кодировки ОС
@@ -60,7 +61,8 @@ proc selectpath {w wplace} {
     vwait $vrr
     if {$typew == "frame"} {
 #Разблокируем кнопки
-	FE::all_enable "."
+#	FE::all_enable "."
+	tk busy forget "."
     }
 #    set r ""
 #Записываем результат в переменную r
