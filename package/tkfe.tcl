@@ -274,7 +274,7 @@ namespace eval FE {
   ttk::style configure Treeview  -rowheight [expr $ha + 2]
 
   proc filedel {w file typefb} {
-    set answer [tk_messageBox -title "Удаление папки/файла" -icon question -message "Вы действительно\nхотите уничтожить\n$file ?" -type yesno]
+    set answer [tk_messageBox -title "Удаление папки/файла" -icon question -message "Вы действительно\nхотите уничтожить\n$file ?" -type yesno -parent $w]
     if {$answer != "yes"} {
       return
     }
@@ -609,7 +609,7 @@ namespace eval FE {
     set tdir [file dirname $tdir ]
     set rr [file readable "$tdir"]
     if {$rr == 0} {
-      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$tdir"
+      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$tdir -parent $w"
       return
     }
     $w.seldir.entdir configure -state normal
@@ -752,7 +752,7 @@ namespace eval FE {
 
     set rr [file readable "$path"]
     if {$rr == 0} {
-      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$path"
+      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$path -parent ."
       set ::tekPATH $path
       return
     }
@@ -926,7 +926,7 @@ puts "\n$newdir\n$oldname\n$newd\n$oldn"
 
     if {[file exists $newd]} {
       if {$type == "file"} {
-        set answer [tk_messageBox -title "Переименование файла" -icon question -message "Файл с таким именем есть:\n$oldname\nПродолжить операцию ?" -type yesno]
+        set answer [tk_messageBox -title "Переименование файла" -icon question -message "Файл с таким именем есть:\n$oldname\nПродолжить операцию ?" -type yesno  -parent $w]
         if {$answer != "yes"} {
           return
         }
