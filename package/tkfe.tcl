@@ -759,7 +759,7 @@ namespace eval FE {
 
     set directory_list [lsort -dictionary [glob -nocomplain -types d -directory "$path" "*"]]
     if {$FE::hiddencb} {
-      set directory_list1 [lsort -dictionary [glob -nocomplain -types d -directory "$path" ".*"]]
+      set directory_list1 [lsort -dictionary [glob -nocomplain -types {d hidden} -directory "$path" "*"]]
       set ptr [string first "/.. " $directory_list1]
       if {$ptr != -1} {
         append directory_list [string range $directory_list1 [expr $ptr + 3] end ]
@@ -773,7 +773,7 @@ namespace eval FE {
     set id [$tree insert $node end -image icondirup -text ".." \
     -values [list $levelup $type]]
     $tree item $id -text ".."
-    foreach f $directory_list {
+    foreach f [lsort -dictionary $directory_list] {
       set type [file type "$f"]
       set rr [file readable "$f"]
       if {$rr == 0} {
