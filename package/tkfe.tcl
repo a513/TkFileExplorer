@@ -423,17 +423,8 @@ namespace eval FE {
 #Главное окно неизменяемое на время работы проводника
       frame $w -bg white
     } else {
-      toplevel $w -bd 3  -relief groove -bg white
-      if {$typefb == "dir"} {
-        wm title $w [mc "Выберите каталог"]
-        wm iconphoto $w icondir
-      } else {
-        wm title $w [mc "Выберите файл"]
-        wm iconphoto $w iconfile
-      }
       set tw $::scrwidth
       set th [expr $::scrheight - 100]
-      wm minsize $w $::scrwidth  [expr $::scrheight - 100]
       set geometr $tw
       append geometr "x"
       append geometr $th
@@ -467,7 +458,17 @@ namespace eval FE {
 
         }
       }
+      toplevel $w -bd 2  -relief groove -bg white
       wm geometry $w $geometr
+#Окно не может перекрываться (yes)
+      wm attributes $w -topmost yes   ;# stays on top - needed for Linux
+      if {$typefb == "dir"} {
+        wm title $w [mc "Выберите каталог"]
+        wm iconphoto $w icondir
+      } else {
+        wm title $w [mc "Выберите файл"]
+        wm iconphoto $w iconfile
+      }
       #Убрать обрамление
       #	wm overrideredirect $w 1
     }
@@ -609,7 +610,7 @@ namespace eval FE {
     set tdir [file dirname $tdir ]
     set rr [file readable "$tdir"]
     if {$rr == 0} {
-      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$tdir -parent $w"
+      tk_messageBox -title "Просмотр папки" -icon info -message "Каталог не доступен:\n$tdir" -parent $w
       return
     }
     $w.seldir.entdir configure -state normal
