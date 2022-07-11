@@ -1,5 +1,6 @@
 #!/usr/bin/wish
 package require Tk
+package require msgcat
 #Комплексный пример импользования файлового проводника tkfe
 
 #Загрузка пакета tkfe
@@ -21,11 +22,7 @@ proc selectpath {w wplace} {
     variable typew
 #Каталог пользователя
     set tekdir $env(HOME)
-    if {$typew == "frame"} {
-#Блокируем все кнопки
-#	FE::all_disable "."
-	tk busy hold "."
-    }
+#    set tekdir $env(TMPDIR)
     if {[tk windowingsystem] == "win32"} {
 #Перекодируем путь из кодировки ОС
 #Для MS Win это скорей всего cp1251
@@ -34,43 +31,71 @@ proc selectpath {w wplace} {
 	set tekdir [string map {"\\" "/"} $tekdir]
     }
 #Фильт для файлов
-    set msk "*.txt *.doc *.crt * .*"
+    set typelist {
+	    {""  {*.can *.svg *txt *.png}}
+	    {"Canvas"     {*.can *.svg *.png}}
+	    {"XML/SVG"    {*.svg}}
+	    {"Text"       {*.txt}}
+	    {{All Files} *}
+    }
+
+    set msk $typelist
+#параметры
+if {0} {
+    set specs {
+	{-typew "" "" "window"}
+	{-widget "" "" "."}
+	{-defaultextension "" "" ""}
+	{-filetypes "" "" ""}
+	{-initialdir "" "" ""}
+	{-initialfile "" "" ""}
+	{-parent "" "" "."}
+	{-title "" "" ""}
+	{-sepfolders "" "" 1}
+	{-foldersfirst "" "" 1}
+#	{-sort "" "" "#0"}
+#	{-reverse "" "" 0}
+	{-details "" "" 0}
+	{-hidden "" "" 0}
+	{-width "" "" 0}
+	{-height "" "" 0}
+    }
+}
+
     switch -- $typefe {
 	open {
 #Выбор файла для чтения
-	    set vrr [FE::fe_getopenfile  $typew $w $tekdir $msk]
+	    set vrr [FE::fe_getopenfile  -typew $typew -widget $w -initialdir $tekdir -filetypes $msk -title "ФАЙЛ ОТКРЫТЬ" -details 1]
 	}
 	save {
 #Выбор файла для записи в него
-	    set vrr [FE::fe_getsavefile  $typew $w $tekdir $msk]
+#  -widget $w
+	    set vrr [FE::fe_getsavefile  -typew $typew -initialdir $tekdir -filetypes $msk -width 600 -height 450]
 	}
 	dir {
 #Выбор катаалога
-	    set vrr [FE::fe_choosedir $typew $w $tekdir ]
+	    set vrr [FE::fe_choosedir  -typew $typew -widget $w -initialdir $tekdir ]
 
 	}
     }
-    if {$typew == "frame"} {
-#Настройка внешнего вида фрейма с проводником
-	$w configure -relief groove -borderwidth 3 -highlightbackground chocolate \
-	    -highlightcolor skyblue  -highlightthickness 3
-#Размещение фреймаа с проводником по одноиу из методов pack/grid/place
-	place $w -in $wplace -relx 0.15 -rely 0.5 -relwidth 0.75 -relheight 7.5
-    }
-#Ждем результата
-    vwait $vrr
-    if {$typew == "frame"} {
-#Разблокируем кнопки
-#	FE::all_enable "."
-	tk busy forget "."
-    }
-#    set r ""
 #Записываем результат в переменную r
-    set r [subst $$vrr]
+    set r $vrr
     if {$r == ""} {
 	set r "Отмена"
     }
     .labchoose configure -text "Ваш выбор:\n$r"
+}
+  #Процедура смены языка и синхронный перевод
+proc changelang {w } {
+    #Смена языка и синхронный перевод
+    #Смена иконки на кнопке
+    if  {[msgcat::mclocale] == "ru"} {
+      msgcat::mclocale en
+      $w.lang configure -image fe_usa_24x16
+    } else {
+      msgcat::mclocale ru
+      $w.lang configure -image fe_ru_24x16
+    }
 }
 
 set pretext "Выберите тип диалога: выбрать файл для последующего чтения или \
@@ -89,8 +114,17 @@ grid columnconfigure .typefe 0 -weight 1
 labelframe .typew -text "Тип размещения" -labelanchor n 
 ttk::radiobutton .typew.chb1 -value frame -variable typew -text "Фрейм"
 ttk::radiobutton .typew.chb2 -value window -variable typew -text "Окно"
+ttk::button .typew.lang -style Toolbutton -command {changelang .typew}
+
+if {[msgcat::mclocale] == "ru" } {
+    .typew.lang configure -image  fe_ru_24x16
+} else {
+    .typew.lang configure -image fe_usa_24x16
+}
+
 grid .typew.chb1 -row 0 -column 0 -sticky w -padx {8 8} -pady {0 1mm}
 grid .typew.chb2 -row 0 -column 1 -sticky ns -pady {0 1mm}
+grid .typew.lang -row 0 -column 2 -sticky ns -pady {0 1mm}
 grid columnconfigure .typew 0 -weight 1
 grid columnconfigure .typew 1 -weight 1
 
