@@ -1110,13 +1110,19 @@ RCErC+t5ev0G+IJgEdGMZSVQYS+e5l9h+80+zAmm+gAAAABJRU5ErkJggg==
 #Текущий каталог 
     set ftd [ttk::frame $fm.tekfolder]
     label $fm.tekfolder.lab -text "[mc {Current directory}]:" -bd 0 -anchor nw
+
+    set dirlist [lindex $FE::folder(history) 0]
+    foreach d $FE::folder(history) {
+        if {[lsearch -exact $dirlist $d] == -1} {
+    	    lappend dirlist $d
+        }
+    }
     if {![info exists initdir]} {
-	set dirlist "/"
 	if {[info exists ::env(HOME)] && ![string equal $::env(HOME) /]} {
-		lappend dirlist $::env(HOME)
+	    lappend dirlist $::env(HOME)
 	}
     } else {
-	set dirlist $initdir
+	lappend dirlist $initdir
     }
 
     ttk::combobox $fm.tekfolder.ldir -width 0 -values $dirlist -textvariable FE::folder(tek)
@@ -1543,7 +1549,7 @@ RCErC+t5ev0G+IJgEdGMZSVQYS+e5l9h+80+zAmm+gAAAABJRU5ErkJggg==
         if {$FE::folder(initialfile) == ""} {
     	    return
         }
-        set ret $FE::folder(initialfile)
+        set ret [file join  $FE::folder(tek) $FE::folder(initialfile)]
       } else {
         return
       }
