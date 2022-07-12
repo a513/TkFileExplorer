@@ -1095,7 +1095,7 @@ RCErC+t5ev0G+IJgEdGMZSVQYS+e5l9h+80+zAmm+gAAAABJRU5ErkJggg==
 
 	set data(lang) [ttk::label $f1.lang -style Toolbutton]
 
-    if {[msgcat::mclocale] == "ru" } {
+    if {[string range [msgcat::mclocale] 0 1] == "ru" } {
 	$data(lang) configure -image  fe_ru_24x16
     } else {
 	$data(lang) configure -image fe_usa_24x16
