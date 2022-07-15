@@ -44,37 +44,68 @@ proc selectpath {w wplace} {
 if {0} {
     set specs {
 	{-typew "" "" "window"}
-	{-widget "" "" "."}
+	{-widget "" "" ""}
 	{-defaultextension "" "" ""}
 	{-filetypes "" "" ""}
 	{-initialdir "" "" ""}
 	{-initialfile "" "" ""}
 	{-parent "" "" "."}
 	{-title "" "" ""}
-	{-sepfolders "" "" 1}
-	{-foldersfirst "" "" 1}
-#	{-sort "" "" "#0"}
-#	{-reverse "" "" 0}
-	{-details "" "" 0}
-	{-hidden "" "" 0}
-	{-width "" "" 0}
-	{-height "" "" 0}
+	{-sepfolders "" "" -1}
+	{-foldersfirst "" "" -1}
+	{-sort "" "" "#0"}
+	{-reverse "" "" 0}
+	{-details "" "" -1}
+	{-hidden "" "" -1}
+	{-width "" "" -10}
+	{-height "" "" -10}
+	{-x "" "" 5}
+	{-y "" "" 5}
+	{-relwidth "" "" 1.0}
+	{-relheight "" "" 1.0}
     }
 }
 
+#Определяем смещение главного окна
+    set yroot [winfo rooty [winfo toplevel $wplace]]
+#Определяем y-координату нажатой кнопки
+    switch -- $typefe {
+	open {
+	    set but 1
+	}
+	save {
+	    set but 2
+	}
+	dir {
+	    set but 3
+	}
+	default {
+	    return
+	}
+    }
+    set ywplace [winfo rooty ".typefe.chb$but"]
+    set hbut [winfo height ".typefe.chb$but"]
+    set dy [expr {$ywplace - $yroot + $hbut}]
+    set hroot [winfo height [winfo toplevel ".typefe.chb$but"]]
+#puts "YROOT=$yroot ywlace=$wplace dy=$dy h root=$hroot"
+    set hfe [expr {$hroot - $dy}]
     switch -- $typefe {
 	open {
 #Выбор файла для чтения
-	    set vrr [FE::fe_getopenfile  -typew $typew -widget $w -initialdir $tekdir -filetypes $msk -title "ФАЙЛ ОТКРЫТЬ" -details 1]
+	    set vrr [FE::fe_getopenfile -typew $typew -widget $w -initialdir $tekdir -filetypes $msk -title "Выбрать ФАЙЛ для чтения" -sepfolders 0 -height $hfe -relheight 0 -y $dy]
+# -details 0
 	}
 	save {
 #Выбор файла для записи в него
-#  -widget $w
-	    set vrr [FE::fe_getsavefile  -typew $typew -initialdir $tekdir -filetypes $msk -width 600 -height 450]
+	    if {$typew == "window"} {
+		set vrr [FE::fe_getsavefile  -typew $typew -initialdir $tekdir -filetypes $msk -width 600 -height 450]
+	    } else {
+		set vrr [FE::fe_getsavefile -y 40  -typew $typew -initialdir $tekdir -filetypes $msk -width -10 -relheight 0 -height $hfe  -y $dy]
+	    }
 	}
 	dir {
 #Выбор катаалога
-	    set vrr [FE::fe_choosedir  -typew $typew -widget $w -initialdir $tekdir ]
+	    set vrr [FE::fe_choosedir  -typew $typew -widget $w -initialdir $tekdir -relheight 0 -height $hfe -y $dy]
 
 	}
     }
